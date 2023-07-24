@@ -26,8 +26,6 @@ source-repository head
 executable exchange-exe
   main-is: exchange.hs
   other-modules:
-      Broker.RabbitMQ
-      Data.Model
       Data.Order
       Data.OrderBook
       Data.Transaction

@@ -1,7 +1,8 @@
-module Data.Order (OrderType (..), Order (..), LimitOrder (..), MarketOrder (..)) where
+module Data.Order (Symbol, OrderType (..), Order (..), LimitOrder (..), MarketOrder (..)) where
 
-import Data.Model
 import Data.Time.Clock
+
+type Symbol = String
 
 data OrderType = Buy | Sell deriving (Show, Eq)
 
