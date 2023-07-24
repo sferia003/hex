@@ -3,20 +3,27 @@ module Lib
   )
 where
 
-import Broker.RabbitMQ
-import Control.Concurrent
-import Data.Text
-import Network.AMQP
+import Data.Order as O
+import Data.OrderBook as OB
+import Data.Time
+import Engine.LimitOrderEngine
 import Prelude
 
 rabbit :: IO ()
 rabbit = do
-  conn <- openConnection "127.0.0.1" (pack "/") (pack "guest") (pack "guest")
-  chan <- openChannel conn
-  setupNExchanges 5 chan
-  putStrLn "Blocking"
-  threadDelay 15000000
-  putStrLn "Publishing"
-  publishMessageToExchangeNum 2 "hello" chan
-  closeConnection conn
-  putStrLn "Closed"
+  putStrLn "Testing"
+  timestamp <- getCurrentTime
+  let ob = OB.empty
+      o = O.LimitOrder (O.Order Sell "MSFT" 5 1.5 timestamp)
+      o2 = O.LimitOrder (O.Order Sell "MSFT" 10 2 (addUTCTime 1 timestamp))
+      o3 = O.LimitOrder (O.Order Sell "MSFT" 10 1.5 (addUTCTime 2 timestamp))
+      o4 = O.LimitOrder (O.Order Buy "MSFT" 30 5 (addUTCTime 3 timestamp))
+      (nob, t) = processLimitOrder o ob
+      (nob2, t2) = processLimitOrder o2 nob
+      (nob3, t3) = processLimitOrder o3 nob2
+      (nob4, t4) = processLimitOrder o4 nob3
+
+  print nob3
+  print t3
+  print nob4
+  print t4

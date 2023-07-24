@@ -24,6 +24,10 @@ dependencies:
 - amqp
 - text
 - bytestring
+- time
+- containers
+- stm
+- pqueue
 
 source-dirs:
   - src

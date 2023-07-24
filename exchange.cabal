@@ -27,7 +27,17 @@ executable exchange-exe
   main-is: exchange.hs
   other-modules:
       Broker.RabbitMQ
+      Data.Model
+      Data.Order
+      Data.OrderBook
+      Data.Transaction
+      Data.Util
+      Engine.LimitOrderEngine
+      Engine.MarketOrderEngine
+      Engine.Match
       Lib
+      Router.Router
+      Router.SymbolQueues
       Paths_exchange
   hs-source-dirs:
       src
@@ -39,5 +49,9 @@ executable exchange-exe
       amqp
     , base >=4.7 && <5
     , bytestring
+    , containers
+    , pqueue
+    , stm
     , text
+    , time
   default-language: Haskell2010
