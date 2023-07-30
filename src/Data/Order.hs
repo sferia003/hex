@@ -1,10 +1,16 @@
-module Data.Order (Symbol, OrderType (..), Order (..), LimitOrder (..), MarketOrder (..)) where
+module Data.Order (Symbol, OrderType (..), Order (..), LimitOrder (..), MarketOrder (..), OrderWrapper (..)) where
 
+import Data.Aeson
 import Data.Time.Clock
+import GHC.Generics
 
 type Symbol = String
 
-data OrderType = Buy | Sell deriving (Show, Eq)
+data OrderType = Buy | Sell deriving (Show, Eq, Generic)
+
+instance ToJSON OrderType
+
+instance FromJSON OrderType
 
 data Order = Order
   { orderType :: OrderType,
@@ -13,11 +19,29 @@ data Order = Order
     price :: Double,
     timestamp :: UTCTime
   }
-  deriving (Show, Eq)
+  deriving (Show, Eq, Generic)
 
-newtype LimitOrder = LimitOrder Order
+instance ToJSON Order
 
-newtype MarketOrder = MarketOrder Order
+instance FromJSON Order
+
+newtype LimitOrder = LimitOrder Order deriving (Generic)
+
+instance ToJSON LimitOrder
+
+instance FromJSON LimitOrder
+
+newtype MarketOrder = MarketOrder Order deriving (Generic)
+
+instance ToJSON MarketOrder
+
+instance FromJSON MarketOrder
+
+data OrderWrapper = LO LimitOrder | MO MarketOrder deriving (Generic)
+
+instance ToJSON OrderWrapper
+
+instance FromJSON OrderWrapper
 
 instance Ord Order where
   compare o1 o2 = case compare (price o1) (price o2) of

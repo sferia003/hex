@@ -1,29 +1,40 @@
-module Lib
-  ( rabbit,
-  )
-where
+module Lib (ingress) where
 
-import Data.Order as O
-import Data.OrderBook as OB
-import Data.Time
-import Engine.LimitOrderEngine
-import Prelude
+import Control.Concurrent.Chan
+import Control.Concurrent.STM
+import Data.Aeson as A
+import Data.ByteString.Char8 as BS
+import Data.Order
+import Network.Simple.TCP
+import Router.SymbolQueues as SQ
 
-rabbit :: IO ()
-rabbit = do
-  putStrLn "Testing"
-  timestamp <- getCurrentTime
-  let ob = OB.empty
-      o = O.LimitOrder (O.Order Sell "MSFT" 5 1.5 timestamp)
-      o2 = O.LimitOrder (O.Order Sell "MSFT" 10 2 (addUTCTime 1 timestamp))
-      o3 = O.LimitOrder (O.Order Sell "MSFT" 10 1.5 (addUTCTime 2 timestamp))
-      o4 = O.LimitOrder (O.Order Buy "MSFT" 30 5 (addUTCTime 3 timestamp))
-      (nob, t) = processLimitOrder o ob
-      (nob2, t2) = processLimitOrder o2 nob
-      (nob3, t3) = processLimitOrder o3 nob2
-      (nob4, t4) = processLimitOrder o4 nob3
+-- Function to handle a client in a separate thread
+handleClient :: SymbolQueues -> (Socket, SockAddr) -> IO ()
+handleClient sq (sock, _) = do
+  loop
+  where
+    loop = do
+      msg <- recv sock 4096
+      case msg of
+        Nothing -> return ()
+        Just order -> do
+          case (decode (fromStrict order) :: Maybe OrderWrapper) of
+            Nothing -> send sock $ pack "An error occurred while decoding"
+            Just lo@(LO (LimitOrder o)) -> do
+              queue <- SQ.get sq (symbol o)
+              case queue of
+                Nothing -> send sock $ pack "hello"
+                Just q -> writeChan q lo
+            Just mo@(MO (MarketOrder o)) -> do
+              queue <- SQ.get sq (symbol o)
+              case queue of
+                Nothing -> send sock $ pack "hello"
+                Just q -> writeChan q mo
+          loop
 
-  print nob3
-  print t3
-  print nob4
-  print t4
+-- Main server loop
+ingress :: IO ()
+ingress = do
+  print "Starting Ingress Interface"
+  symbolQueues <- SQ.empty
+  serve (Host "127.0.0.1") "8000" $ handleClient symbolQueues

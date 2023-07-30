@@ -1,9 +1,9 @@
-module Router.Router (empty, registerNewSymbolQueue, routeOrderToQueue) where
+module Router.Router (Router.Router.empty, registerNewSymbolQueue, routeOrderToQueue) where
 
+import Control.Concurrent.Chan
 import Control.Concurrent.STM
 import Data.Map qualified as Map
 import Data.Maybe
-import Data.Model
 import Data.Order
 import Router.SymbolQueues
 
@@ -13,10 +13,10 @@ empty =
 
 registerNewSymbolQueue :: SymbolQueues -> Symbol -> IO ()
 registerNewSymbolQueue symbolqueues symbol = do
-  queue <- newTQueueIO
+  queue <- newChan
   atomically $ modifyTVar' symbolqueues (Map.insert symbol queue)
 
-routeOrderToQueue :: SymbolQueues -> Order -> IO ()
+routeOrderToQueue :: SymbolQueues -> OrderWrapper -> IO ()
 routeOrderToQueue symbolqueues order = do
   queues <- readTVarIO symbolqueues
-  atomically $ writeTQueue (fromJust $ Map.lookup (symbol order) queues) order
+  writeChan (fromJust $ Map.lookup ("a") queues) order

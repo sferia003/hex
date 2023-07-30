@@ -28,6 +28,8 @@ dependencies:
 - containers
 - stm
 - pqueue
+- aeson
+- network-simple
 
 source-dirs:
   - src
@@ -45,6 +47,7 @@ ghc-options:
 
 default-extensions:
   ImportQualifiedPost
+  DeriveGeneric
 
 executables:
   exchange-exe:
