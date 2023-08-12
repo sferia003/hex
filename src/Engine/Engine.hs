@@ -19,7 +19,6 @@ spinUpEngineWorker sym sq = do
 
 engineWorker :: IORef OrderBook -> SymbolQueue -> IO ()
 engineWorker ob sq = forever $ do
-  print "Hi"
   orderBook <- readIORef ob
   item <- readChan sq
   let order = case item of

@@ -4,7 +4,6 @@ import Control.Concurrent.Chan
 import Control.Concurrent.STM
 import Data.Map qualified as Map
 import Data.Order
-import Engine.Engine
 import MessageBroker.RabbitMQ as MQ
 import Network.AMQP
 import Router.SymbolQueues as SQ
@@ -14,9 +13,9 @@ empty =
   do newTVarIO Map.empty
 
 registerNewSymbolQueue :: SymbolQueues -> Symbol -> IO ()
-registerNewSymbolQueue symbolqueues symbol = do
+registerNewSymbolQueue symbolqueues symbolname = do
   queue <- newChan
-  atomically $ modifyTVar' symbolqueues (Map.insert symbol queue)
+  atomically $ modifyTVar' symbolqueues (Map.insert symbolname queue)
 
 routeOrderToQueue :: Channel -> SymbolQueues -> OrderWrapper -> IO ()
 routeOrderToQueue chan symbolqueues order = do

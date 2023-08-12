@@ -19,9 +19,10 @@ handleClient sq (sock, _) = do
       case msg of
         Nothing -> return ()
         Just order -> do
-          case (decode (fromStrict order) :: Maybe OrderWrapper) of
+          case (decode (fromStrict order) :: Maybe IngressOrder) of
             Nothing -> send sock $ pack "An error occurred while decoding"
-            Just o -> do
+            Just io -> do
+              o <- convertIngressToOrderWrapper io
               queue <- SQ.get sq (owsymbol o)
               case queue of
                 Nothing -> do
@@ -34,6 +35,6 @@ handleClient sq (sock, _) = do
 
 ingress :: IO ()
 ingress = do
-  print "Starting Ingress Interface"
+  print ("Starting Ingress Interface" :: String)
   symbolQueues <- SQ.empty
   serve (Host "127.0.0.1") "8000" $ handleClient symbolQueues

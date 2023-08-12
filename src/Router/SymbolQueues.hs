@@ -13,12 +13,12 @@ empty :: IO SymbolQueues
 empty = newTVarIO Map.empty
 
 insert :: SymbolQueues -> Symbol -> IO ()
-insert sq symbol = do
+insert sq symbolname = do
   m <- readTVarIO sq
   c <- newChan
-  atomically $ writeTVar sq (Map.insert symbol c m)
+  atomically $ writeTVar sq (Map.insert symbolname c m)
 
 get :: SymbolQueues -> Symbol -> IO (Maybe SymbolQueue)
-get sq symbol = do
+get sq symbolname = do
   m <- readTVarIO sq
-  return $ Map.lookup symbol m
+  return $ Map.lookup symbolname m
