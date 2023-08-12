@@ -34,15 +34,17 @@ executable exchange-exe
       Engine.LimitOrderEngine
       Engine.MarketOrderEngine
       Engine.Match
-      Lib
+      Ingress
+      MessageBroker.RabbitMQ
       Router.Router
       Router.SymbolQueues
+      Runner
       Paths_exchange
   hs-source-dirs:
       src
       driver
   default-extensions:
-      ImportQualifiedPost DeriveGeneric
+      ImportQualifiedPost DeriveGeneric OverloadedStrings
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       aeson

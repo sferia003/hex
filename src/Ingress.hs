@@ -1,10 +1,11 @@
-module Lib (ingress) where
+module Ingress (ingress) where
 
 import Control.Concurrent.Chan
-import Control.Concurrent.STM
 import Data.Aeson as A
 import Data.ByteString.Char8 as BS
+import Data.Maybe
 import Data.Order
+import Engine.Engine
 import Network.Simple.TCP
 import Router.SymbolQueues as SQ
 
@@ -20,19 +21,17 @@ handleClient sq (sock, _) = do
         Just order -> do
           case (decode (fromStrict order) :: Maybe OrderWrapper) of
             Nothing -> send sock $ pack "An error occurred while decoding"
-            Just lo@(LO (LimitOrder o)) -> do
-              queue <- SQ.get sq (symbol o)
+            Just o -> do
+              queue <- SQ.get sq (owsymbol o)
               case queue of
-                Nothing -> send sock $ pack "hello"
-                Just q -> writeChan q lo
-            Just mo@(MO (MarketOrder o)) -> do
-              queue <- SQ.get sq (symbol o)
-              case queue of
-                Nothing -> send sock $ pack "hello"
-                Just q -> writeChan q mo
+                Nothing -> do
+                  insert sq (owsymbol o)
+                  spinUpEngineWorker (owsymbol o) sq
+                  q <- SQ.get sq (owsymbol o)
+                  writeChan (fromJust q) o
+                Just q -> writeChan q o
           loop
 
--- Main server loop
 ingress :: IO ()
 ingress = do
   print "Starting Ingress Interface"

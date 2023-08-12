@@ -3,9 +3,11 @@ module Router.Router (Router.Router.empty, registerNewSymbolQueue, routeOrderToQ
 import Control.Concurrent.Chan
 import Control.Concurrent.STM
 import Data.Map qualified as Map
-import Data.Maybe
 import Data.Order
-import Router.SymbolQueues
+import Engine.Engine
+import MessageBroker.RabbitMQ as MQ
+import Network.AMQP
+import Router.SymbolQueues as SQ
 
 empty :: IO SymbolQueues
 empty =
@@ -16,7 +18,13 @@ registerNewSymbolQueue symbolqueues symbol = do
   queue <- newChan
   atomically $ modifyTVar' symbolqueues (Map.insert symbol queue)
 
-routeOrderToQueue :: SymbolQueues -> OrderWrapper -> IO ()
-routeOrderToQueue symbolqueues order = do
-  queues <- readTVarIO symbolqueues
-  writeChan (fromJust $ Map.lookup ("a") queues) order
+routeOrderToQueue :: Channel -> SymbolQueues -> OrderWrapper -> IO ()
+routeOrderToQueue chan symbolqueues order = do
+  sq <- SQ.get symbolqueues sym
+  case sq of
+    Just queue -> writeChan queue order
+    Nothing -> do
+      SQ.insert symbolqueues sym
+      MQ.declareExchange chan sym
+  where
+    sym = owsymbol order

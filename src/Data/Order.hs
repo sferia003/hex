@@ -1,4 +1,4 @@
-module Data.Order (Symbol, OrderType (..), Order (..), LimitOrder (..), MarketOrder (..), OrderWrapper (..)) where
+module Data.Order (Symbol, OrderType (..), Order (..), LimitOrder (..), MarketOrder (..), OrderWrapper (..), owsymbol) where
 
 import Data.Aeson
 import Data.Time.Clock
@@ -38,6 +38,10 @@ instance ToJSON MarketOrder
 instance FromJSON MarketOrder
 
 data OrderWrapper = LO LimitOrder | MO MarketOrder deriving (Generic)
+
+owsymbol :: OrderWrapper -> Symbol
+owsymbol (LO (LimitOrder o)) = symbol o
+owsymbol (MO (MarketOrder o)) = symbol o
 
 instance ToJSON OrderWrapper
 

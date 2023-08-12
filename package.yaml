@@ -48,6 +48,7 @@ ghc-options:
 default-extensions:
   ImportQualifiedPost
   DeriveGeneric
+  OverloadedStrings
 
 executables:
   exchange-exe:

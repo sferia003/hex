@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Lib
+import Runner
 
 main :: IO ()
-main = rabbit
+main = runner
