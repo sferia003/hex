@@ -28,9 +28,10 @@ handleClient sq rabbitmq (sock, _) = do
               queue <- SQ.get sq (owsymbol o)
               case queue of
                 Nothing -> do
-                  insert sq (owsymbol o)
-                  spinUpEngineWorker (owsymbol o) sq
+                  SQ.insert sq (owsymbol o)
+                  spinUpEngineWorker rabbitmq (owsymbol o) sq
                   q <- SQ.get sq (owsymbol o)
+                  RAB.newQueue rabbitmq (owsymbol o)
                   writeChan (fromJust q) o
                 Just q -> writeChan q o
           loop
@@ -40,5 +41,5 @@ ingress = do
   print ("Starting Ingress Interface" :: String)
   symbolQueues <- SQ.empty
   rabbitMQConnection <- RAB.connectToRabbitMQServer
-  exchange <- RAB.declareExchange rabbitMQConnection
+  RAB.declareExchange rabbitMQConnection
   serve (Host "127.0.0.1") "8000" $ handleClient symbolQueues rabbitMQConnection
