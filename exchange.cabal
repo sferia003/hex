@@ -30,6 +30,7 @@ executable exchange-exe
       Data.OrderBook
       Data.Transaction
       Data.Util
+      Egress
       Engine.Engine
       Engine.LimitOrderEngine
       Engine.MarketOrderEngine

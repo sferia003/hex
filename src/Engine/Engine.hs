@@ -9,6 +9,7 @@ import Data.Maybe
 import Data.Order as O
 import Data.OrderBook as OB
 import Engine.LimitOrderEngine
+import MessageBroker.RabbitMQ
 import Router.SymbolQueues
 
 spinUpEngineWorker :: Symbol -> SymbolQueues -> IO ()

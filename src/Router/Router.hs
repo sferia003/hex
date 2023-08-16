@@ -24,6 +24,6 @@ routeOrderToQueue chan symbolqueues order = do
     Just queue -> writeChan queue order
     Nothing -> do
       SQ.insert symbolqueues sym
-      MQ.declareExchange chan sym
+      MQ.newQueue chan sym
   where
     sym = owsymbol order
