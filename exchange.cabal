@@ -30,6 +30,7 @@ executable egress-exe
       Data.OrderBook
       Data.Transaction
       Data.Util
+      Egress
       Engine.Engine
       Engine.LimitOrderEngine
       Engine.MarketOrderEngine
@@ -65,6 +66,7 @@ executable ingress-exe
       Data.OrderBook
       Data.Transaction
       Data.Util
+      Egress
       Engine.Engine
       Engine.LimitOrderEngine
       Engine.MarketOrderEngine
