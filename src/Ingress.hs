@@ -11,6 +11,11 @@ import Network.AMQP
 import Network.Simple.TCP
 import Router.SymbolQueues as SQ
 
+sendLog :: Socket -> ByteString -> IO ()
+sendLog s b = do
+  send s b
+  print b
+
 -- Function to handle a client in a separate thread
 handleClient :: SymbolQueues -> Channel -> (Socket, SockAddr) -> IO ()
 handleClient sq rabbitmq (sock, _) = do
@@ -22,7 +27,7 @@ handleClient sq rabbitmq (sock, _) = do
         Nothing -> return ()
         Just order -> do
           case (decode (fromStrict order) :: Maybe IngressOrder) of
-            Nothing -> send sock $ pack "An error occurred while decoding"
+            Nothing -> sendLog sock $ pack "An error occurred while decoding"
             Just io -> do
               o <- convertIngressToOrderWrapper io
               queue <- SQ.get sq (owsymbol o)

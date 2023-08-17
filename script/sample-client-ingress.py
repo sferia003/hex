@@ -1,20 +1,49 @@
 import socket
+import json
+import time 
 
-firstBatch = "{\r\n\"iOrderType\": \"Sell\",\r\n  \"iLimit\": true,\r\n  \"iSymbol\": \"Hello\",\r\n  \"iQuantity\": 2,\r\n  \"iPrice\": 2\r\n}"
-secondBatch = "{\r\n  \"iOrderType\": \"Buy\",\r\n  \"iLimit\": true,\r\n  \"iSymbol\": \"Hello\",\r\n  \"iQuantity\": 2,\r\n  \"iPrice\": 2\r\n}"
+def dataf(t):
+    return {
+            "iOrderType": t[0],
+            "iLimit": t[1],
+            "iSymbol": t[2],
+            "iTraderId": t[3],
+            "iQuantity": t[4],
+            "iPrice": t[5]
+        }
 
-def client_program():
+def format(t):
+    return json.dumps(dataf(t)).encode()
+
+def c():
     host = "127.0.0.1"
     port = 8000 
 
+    symbols = ["a", "b", "c"]
+
     input()
+    id = 0
+
     client_socket = socket.create_connection((host, port))
-    client_socket.send(firstBatch.encode())
+
+    # Make buy orders
+    for symbol in symbols:
+        client_socket.sendall(format(("Buy", True, symbol, id, 2, 2)))
+        id = id + 1
+        time.sleep(1)
+
+    print("Finished Buy Orders")
+
     input()
-    client_socket.send(secondBatch.encode())
+
+    # Make sell orders
+    for symbol in symbols:
+        client_socket.sendall(format(("Sell", True, symbol, id, 2, 2)))
+        id = id + 1
+        time.sleep(1)
 
     client_socket.close()  # close the connection
 
 
 if __name__ == '__main__':
-    client_program()
+    c()

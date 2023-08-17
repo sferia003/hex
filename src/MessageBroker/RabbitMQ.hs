@@ -12,7 +12,7 @@ connectToRabbitMQServer = do
 
 declareExchange :: Channel -> IO ()
 declareExchange chan =
-  MQ.declareExchange chan newExchange {exchangeName = "main", exchangeType = "fanout"}
+  MQ.declareExchange chan newExchange {exchangeName = "main", exchangeType = "direct"}
 
 newQueue :: Channel -> Symbol -> IO ()
 newQueue chan symbolname = do

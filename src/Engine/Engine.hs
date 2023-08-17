@@ -9,6 +9,8 @@ import Data.Map as Map
 import Data.Maybe
 import Data.Order as O
 import Data.OrderBook as OB
+import Data.Text as TE
+import Data.Transaction as T
 import Engine.LimitOrderEngine
 import Engine.MarketOrderEngine
 import Network.AMQP
@@ -27,5 +29,5 @@ engineWorker chan ob sq = forever $ do
   let (nob, transactions) = case item of
         LO o -> processLimitOrder o orderBook
         MO o -> processMarketOrder o orderBook
-   in mapM_ (\m -> publishMsg chan "main" "" (newMsg {msgBody = encode m, msgDeliveryMode = Just Persistent})) transactions
+   in mapM_ (\m -> publishMsg chan "main" (TE.pack (T.symbol m)) (newMsg {msgBody = encode m, msgDeliveryMode = Just Persistent})) transactions
         >> writeIORef ob nob
