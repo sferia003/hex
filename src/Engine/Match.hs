@@ -13,7 +13,7 @@ match otype buyOrder sellOrder orderBook =
       updatedBuyQty = remainingBuyQty - matchedQty
       updatedSellQty = remainingSellQty - matchedQty
       priceOfTopOfBook = if otype == Buy then O.price sellOrder else O.price buyOrder
-      matchedTransaction = Transaction priceOfTopOfBook matchedQty
+      matchedTransaction = Transaction priceOfTopOfBook matchedQty (O.traderId sellOrder) (O.traderId buyOrder)
       remainingBuyOrder = buyOrder {O.quantity = updatedBuyQty}
       remainingSellOrder = sellOrder {O.quantity = updatedSellQty}
       remainingOrder = (otype == Sell) ? (remainingSellOrder, remainingBuyOrder)

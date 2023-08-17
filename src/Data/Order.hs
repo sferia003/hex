@@ -17,7 +17,8 @@ data Order = Order
     symbol :: Symbol,
     quantity :: Int,
     price :: Double,
-    timestamp :: UTCTime
+    timestamp :: UTCTime,
+    traderId :: Int
   }
   deriving (Show, Eq, Generic)
 
@@ -26,7 +27,8 @@ data IngressOrder = IngressOrder
     iLimit :: Bool,
     iSymbol :: Symbol,
     iQuantity :: Int,
-    iPrice :: Double
+    iPrice :: Double,
+    iTraderId :: Int
   }
   deriving (Show, Eq, Generic)
 
@@ -56,8 +58,8 @@ convertIngressToOrderWrapper :: IngressOrder -> IO OrderWrapper
 convertIngressToOrderWrapper io = do
   time <- getCurrentTime
   if iLimit io
-    then return $ LO (LimitOrder (Order {orderType = iOrderType io, symbol = iSymbol io, quantity = iQuantity io, price = iPrice io, timestamp = time}))
-    else return $ MO (MarketOrder (Order {orderType = iOrderType io, symbol = iSymbol io, quantity = iQuantity io, price = iPrice io, timestamp = time}))
+    then return $ LO (LimitOrder (Order {orderType = iOrderType io, symbol = iSymbol io, quantity = iQuantity io, price = iPrice io, timestamp = time, traderId = iTraderId io}))
+    else return $ MO (MarketOrder (Order {orderType = iOrderType io, symbol = iSymbol io, quantity = iQuantity io, price = iPrice io, timestamp = time, traderId = iTraderId io}))
 
 owsymbol :: OrderWrapper -> Symbol
 owsymbol (LO (LimitOrder o)) = symbol o

@@ -5,7 +5,9 @@ import GHC.Generics
 
 data Transaction = Transaction
   { price :: Double,
-    quantity :: Int
+    quantity :: Int,
+    fromTraderId :: Int,
+    toTraderId :: Int
   }
   deriving (Show, Generic)
 
