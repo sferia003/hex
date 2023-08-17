@@ -23,8 +23,8 @@ source-repository head
   type: git
   location: https://github.com/githubuser/exchange
 
-executable exchange-exe
-  main-is: exchange.hs
+executable egress-exe
+  main-is: Main.hs
   other-modules:
       Data.Order
       Data.OrderBook
@@ -38,11 +38,45 @@ executable exchange-exe
       MessageBroker.RabbitMQ
       Router.Router
       Router.SymbolQueues
-      Runner
       Paths_exchange
   hs-source-dirs:
       src
-      driver
+      outbound
+  default-extensions:
+      ImportQualifiedPost DeriveGeneric OverloadedStrings
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wredundant-constraints -threaded
+  build-depends:
+      aeson
+    , amqp
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , network-simple
+    , pqueue
+    , stm
+    , text
+    , time
+  default-language: Haskell2010
+
+executable ingress-exe
+  main-is: Main.hs
+  other-modules:
+      Data.Order
+      Data.OrderBook
+      Data.Transaction
+      Data.Util
+      Engine.Engine
+      Engine.LimitOrderEngine
+      Engine.MarketOrderEngine
+      Engine.Match
+      Ingress
+      MessageBroker.RabbitMQ
+      Router.Router
+      Router.SymbolQueues
+      Paths_exchange
+  hs-source-dirs:
+      src
+      inbound
   default-extensions:
       ImportQualifiedPost DeriveGeneric OverloadedStrings
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wredundant-constraints -threaded

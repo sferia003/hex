@@ -10,6 +10,7 @@ import Data.Maybe
 import Data.Order as O
 import Data.OrderBook as OB
 import Engine.LimitOrderEngine
+import Engine.MarketOrderEngine
 import Network.AMQP
 import Router.SymbolQueues
 
@@ -23,9 +24,8 @@ engineWorker :: Channel -> IORef OrderBook -> SymbolQueue -> IO ()
 engineWorker chan ob sq = forever $ do
   orderBook <- readIORef ob
   item <- readChan sq
-  let order = case item of
-        LO o -> Just o
-        _ -> Nothing
-      (nob, transactions) = processLimitOrder (fromJust order) orderBook
+  let (nob, transactions) = case item of
+        LO o -> processLimitOrder o orderBook
+        MO o -> processMarketOrder o orderBook
    in mapM_ (\m -> publishMsg chan "main" "" (newMsg {msgBody = encode m, msgDeliveryMode = Just Persistent})) transactions
         >> writeIORef ob nob

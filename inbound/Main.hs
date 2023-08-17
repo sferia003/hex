@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Runner
+import Ingress
 
 main :: IO ()
-main = runner
+main = ingress

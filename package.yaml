@@ -51,6 +51,9 @@ default-extensions:
   OverloadedStrings
 
 executables:
-  exchange-exe:
-    main:                exchange.hs 
-    source-dirs:         driver
+  ingress-exe:
+    main:                Main.hs 
+    source-dirs:         inbound
+  egress-exe:
+    main:                Main.hs 
+    source-dirs:         outbound
