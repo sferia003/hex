@@ -1,5 +1,5 @@
 # Haskell EXchange (HEX)
-Welcome to the Haskell Exchange (HEX), a cutting-edge trading platform built using Haskell and powered by RabbitMQ for seamless communication. This documentation will guide you through the setup, usage, and development of HEX, providing you with a comprehensive understanding of its features and capabilities.
+Welcome to the Haskell Exchange (HEX), a trading platform built using Haskell and powered by RabbitMQ. This documentation will guide you through the setup, usage, and development of HEX, providing you with a comprehensive understanding of its features and capabilities.
 
 ## Setup
 
@@ -66,5 +66,3 @@ For contributing to HEX and developing new features, follow these steps:
 - Order Lifecycle Management: Develop a robust order lifecycle system with order IDs and states for improved tracking and transparency.
 - Configuration Management: Implement a configuration file system to streamline changes to the exchange's behavior without requiring extensive recompilation.
 - Comprehensive Testing: Develop automated tests to validate the behavior of HEX and ensure reliability and stability.
-  
-HEX is committed to continuous improvement, delivering a secure and feature-rich trading experience for traders around the world. Your feedback and contributions are valuable as we evolve and refine the platform.
